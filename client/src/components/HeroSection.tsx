@@ -60,13 +60,13 @@ const HeroSection: React.FC = () => {
   const getTextPositionStyles = (position: string) => {
     switch (position) {
       case "center":
-        return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
+        return { top: "50%", left: "50%" };
       case "left":
-        return { top: "50%", left: "10%", transform: "translateY(-50%)" };
+        return { top: "50%", left: "10%" };
       case "right":
-        return { top: "50%", right: "10%", transform: "translateY(-50%)" };
+        return { top: "50%", right: "10%" };
       case "bottom":
-        return { bottom: "10%", left: "50%", transform: "translateX(-50%)" };
+        return { bottom: "10%", left: "50%" };
       default:
         return {};
     }
