@@ -153,7 +153,7 @@ const Products: React.FC = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            bgcolor: "rgba(56, 142, 60, 0.6)", // Subtle green overlay (theme.primary.main)
+            bgcolor: "primary.dark",
             zIndex: 1,
           }}
         />

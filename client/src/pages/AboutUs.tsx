@@ -257,21 +257,21 @@ const AboutUs: React.FC = () => {
           {[
             {
               name: "Raghavendra Alladi",
-              title: "Co-Founder & CEO",
+              title: "Co-Founder",
               description:
                 "A visionary in sustainable agriculture with a deep passion for innovation.",
               image: "/images/raghavendra.png",
             },
             {
               name: "Nikhila Vemula",
-              title: "Co-Founder & CFO",
+              title: "Co-Founder",
               description:
                 "Dedicated to operational excellence and empowering communities.",
               image: "/images/nikhila.png",
             },
             {
               name: "Puran Kalapala",
-              title: "Co-Founder & CTO",
+              title: "Co-Founder",
               description:
                 "Driving technology innovation to redefine eco-friendly practices.",
               image: "/images/puran.png",

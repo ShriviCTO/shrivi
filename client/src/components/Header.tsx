@@ -66,7 +66,7 @@ const Header: React.FC = () => {
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "'Dancing Script', cursive",
+              fontFamily: "'Lora', cursive",
               fontWeight: "bold",
               color: "white",
               textAlign: { xs: "center", md: "left" },
@@ -74,7 +74,7 @@ const Header: React.FC = () => {
               fontSize: { xs: "1.5rem", md: "2rem" }, // Explicitly set font size (smaller for xs, larger for md)
             }}
           >
-            Shrivi Organics
+            SHRIVI ORGANICS
           </Typography>
         </Box>
 
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
         <Typography
           variant="h5"
           sx={{
-            fontFamily: "'Dancing Script', cursive",
+            fontFamily: "'Lora', cursive",
             fontWeight: "bold",
             color: "white",
             textAlign: "center",
@@ -91,7 +91,7 @@ const Header: React.FC = () => {
             fontSize: "1.8rem", // Slightly larger font size for small screens
           }}
         >
-          Shrivi Organics
+          SHRIVI ORGANICS
         </Typography>
 
         {/* Desktop navigation links */}

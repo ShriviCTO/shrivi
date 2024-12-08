@@ -3,22 +3,22 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6d9835", // Vibrant leafy green
-      light: "#a4c639", // Soft lime green for highlights
-      dark: "#4c6b24", // Dark green for contrasts
+      main: "#8c5f66", // Rose Taupe
+      light: "#e09891", // Light Coral
+      dark: "#5a3c42", // Dark muted red-brown
     },
     secondary: {
-      main: "#f89b2a", // Warm orange for fertilizers
-      light: "#ffbe50", // Soft yellow-orange
-      dark: "#c67100", // Rich dark orange
+      main: "#adbca5", // Ash Gray
+      light: "#e8b9ab", // Melon for highlights
+      dark: "#5a3c42", // Dark muted gray-brown for contrast
     },
     background: {
-      default: "#f6f7f0", // Light beige for backgrounds
-      paper: "#ffffff", // White for cards and modals
+      default: "#e8b9ab", // Melon for a soft, warm background
+      paper: "#f6f6f6", // Off-white for cards and modals
     },
     text: {
-      primary: "#354b22", // Dark green for text
-      secondary: "#6c6f49", // Muted green-gray for secondary text
+      primary: "#2f2f2f", // Charcoal gray for primary text
+      secondary: "#6c6f49", // Subtle green-gray for secondary text
     },
   },
   typography: {
