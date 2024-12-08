@@ -10,6 +10,7 @@ import BulkOrders from "./pages/BulkOrders";
 import Careers from "./pages/Careers";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import UrvarukaProduct from "./pages/UrvarukaProduct";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,10 @@ const App: React.FC = () => {
           <Route path="/" element={<Home></Home>}></Route>
           <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
           <Route path="/products" element={<Products></Products>}></Route>
+          <Route
+            path="/products/urvaruka"
+            element={<UrvarukaProduct></UrvarukaProduct>}
+          ></Route>
           <Route path="/blog" element={<Blog></Blog>}></Route>
           <Route path="/faq" element={<FAQ></FAQ>}></Route>
           <Route path="/contact" element={<Contact></Contact>}></Route>
