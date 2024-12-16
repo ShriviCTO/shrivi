@@ -2,25 +2,81 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Website of Shrivi Organics" />
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Shrivi Organics LLP - Transforming food waste into high-quality, sustainable products for pet nutrition and organic farming." />
+  <meta name="keywords"
+    content="Shrivi Organics, pet nutrition, organic farming, sustainable waste management, eco-friendly products, protein-rich pet treats, aquaculture nutrition, poultry feed, fish feed, mushroom farming solutions, sustainability, India organic products, organic manure" />
+  <meta name="author" content="Shrivi Organics LLP" />
+  <meta name="theme-color" content="#8c5f66" />
+
+  <!-- Open Graph Metadata for Social Sharing -->
+  <meta property="og:title" content="Shrivi Organics - Sustainable Products for a Healthier Planet" />
+  <meta property="og:description"
+    content="Explore Shrivi Organics' sustainable, eco-friendly products for pets, poultry, aquaculture, and organic farming. Join us in making the planet greener!" />
+  <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+  <meta property="og:url" content="https://www.shriviorganics.com" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Shrivi Organics" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Shrivi Organics - Sustainable Products for a Healthier Planet" />
+  <meta name="twitter:description"
+    content="Discover Shrivi Organics' innovative products for pets, poultry, and farms, all crafted with sustainability in mind." />
+  <meta name="twitter:image" content="%PUBLIC_URL%/twitter-image.jpg" />
+  <meta name="twitter:site" content="@shrivi.organics" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Lora:wght@400;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Website Title -->
+  <title>Shrivi Organics - Sustainable Solutions for Pet Nutrition & Organic Farming</title>
+
+  <!-- Manifest for PWA -->
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet" />
-  <title>Shrivi Organics</title>
 </head>
+<!-- Analytics Integration, Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y8SJ38CBKZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'G-Y8SJ38CBKZ');
+</script>
 
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <!-- Fallback for JavaScript -->
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+
   <div id="root"></div>
+
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Shrivi Organics LLP",
+      "url": "https://www.shriviorganics.com",
+      "logo": "%PUBLIC_URL%/logo192.png",
+      "description": "Shrivi Organics transforms food waste into eco-friendly, high-quality products for pet nutrition and organic farming. Join us in creating a sustainable future.",
+      "sameAs": [
+        "https://www.instagram.com/shrivi.organics"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "India"
+      }
+    }
+  </script>
 </body>
 
 </html>
