@@ -1,45 +1,44 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import AboutUs from "./pages/AboutUs";
-import Products from "./pages/Products";
-import Blog from "./pages/Blog";
-import FAQ from "./pages/FAQ";
-import Contact from "./pages/Contact";
-import BulkOrders from "./pages/BulkOrders";
-import Careers from "./pages/Careers";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import UrvarukaProduct from "./pages/UrvarukaProduct";
+import LoadingSpinner from "./components/LoadingSpinner"; // For Suspense fallback
+import ErrorBoundary from "./components/ErrorBoundary"; // For handling errors
+
+// Lazy-loaded components for better performance
+const Home = lazy(() => import("./pages/Home"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const Products = lazy(() => import("./pages/Products"));
+const UrvarukaProduct = lazy(() => import("./pages/UrvarukaProduct"));
+const Blog = lazy(() => import("./pages/Blog"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Contact = lazy(() => import("./pages/Contact"));
+const BulkOrders = lazy(() => import("./pages/BulkOrders"));
+const Careers = lazy(() => import("./pages/Careers"));
 
 const App: React.FC = () => {
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-    >
-      <Header />
-      <div style={{ flex: 1 }}>
-        {/* Main Content */}
-        <Routes>
-          <Route path="/" element={<Home></Home>}></Route>
-          <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
-          <Route path="/products" element={<Products></Products>}></Route>
-          <Route
-            path="/products/urvaruka"
-            element={<UrvarukaProduct></UrvarukaProduct>}
-          ></Route>
-          <Route path="/blog" element={<Blog></Blog>}></Route>
-          <Route path="/faq" element={<FAQ></FAQ>}></Route>
-          <Route path="/contact" element={<Contact></Contact>}></Route>
-          <Route
-            path="/bulk-orders"
-            element={<BulkOrders></BulkOrders>}
-          ></Route>
-          <Route path="/careers" element={<Careers></Careers>}></Route>
-        </Routes>
+    <ErrorBoundary>
+      <div className="app-container">
+        <Header />
+        <main className="main-content">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/urvaruka" element={<UrvarukaProduct />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/bulk-orders" element={<BulkOrders />} />
+              <Route path="/careers" element={<Careers />} />
+            </Routes>
+          </Suspense>
+        </main>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </ErrorBoundary>
   );
 };
 
