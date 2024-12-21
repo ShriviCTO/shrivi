@@ -1,29 +1,30 @@
 import { Request, Response } from 'express';
-
-// Dummy data for demonstration
-const users = [
-  { id: 1, name: 'Alice', email: 'alice@example.com' },
-  { id: 2, name: 'Bob', email: 'bob@example.com' },
-];
+import User from '../models/User';
 
 export const getAllUsers = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  res.json(users);
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching users', details: error });
+  }
 };
 
-export const getUserProfile = async (
+export const createUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = parseInt(req.params.id, 10);
+  try {
+    const { name, email, role, password } = req.body;
 
-  const user = users.find((u) => u.id === userId);
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
+    const newUser = new User({ name, email, role, password });
+    const savedUser = await newUser.save();
+
+    res.status(201).json(savedUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating user', details: error });
   }
-
-  res.json(user);
 };

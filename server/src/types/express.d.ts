@@ -1,9 +1,14 @@
 import { JwtPayload } from 'jsonwebtoken';
 
+interface CustomJwtPayload extends JwtPayload {
+  id: string;
+  role: string;
+}
+
 declare global {
   namespace Express {
     interface Request {
-      user?: string | JwtPayload; // Adjust type to match your JWT payload
+      user?: CustomJwtPayload; // Custom payload type
     }
   }
 }

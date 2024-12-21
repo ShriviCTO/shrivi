@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { verifyToken } from '../utils/jwtUtils';
 
 export const authenticateJWT = (
   req: Request,
@@ -13,14 +13,20 @@ export const authenticateJWT = (
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'secret'
-    ) as JwtPayload;
-    console.log(decoded);
-    // req.user = decoded; // Assuming you've extended the `Request` type to include `user`
+    const decoded = verifyToken(token);
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(403).json({ code: 'Invalid token', error });
+    res.status(403).json({ error });
   }
+};
+
+export const authorizeRoles = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      res.status(403).json({ error: 'Access denied' });
+      return;
+    }
+    next();
+  };
 };
