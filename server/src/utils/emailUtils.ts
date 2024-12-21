@@ -42,8 +42,15 @@ export const sendEmail = async (
     // Send email
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ Email sent to ${to}: ${info.messageId}`);
-  } catch (error: any) {
-    console.error(`❌ Failed to send email to ${to}:`, error.message || error);
-    throw error;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Now TypeScript knows error is an instance of Error
+      console.error(`❌ Failed to send email to ${to}: ${error.message}`);
+    } else {
+      console.error(
+        `❌ An unknown error occurred while sending email to ${to}`
+      );
+    }
+    throw error; // Re-throw the error for further handling
   }
 };

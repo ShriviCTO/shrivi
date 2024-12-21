@@ -1,56 +1,39 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
-  _id: mongoose.Types.ObjectId; // Explicitly declare the type
+  _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
-  role: string; // ['founder', 'inventory manager', 'dispatch', 'content manager', 'customer']
-  password?: string; // Optional for social login users
-  isVerified: boolean; // Email verification status
-  verificationToken?: string; // Token for email verification
-  resetPasswordToken?: string; // Token for password reset
-  resetPasswordExpires?: Date; // Expiry for reset password token
-  phoneNumber?: string; // Optional
-  profilePicture?: string; // URL to profile picture
-  bio?: string; // About the user
+  role: string;
+  password?: string;
+  isVerified: boolean;
+  verificationToken?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  phoneNumber?: string;
+  profilePicture?: string;
+  bio?: string;
   addresses?: Array<{
-    alias: string; // e.g., 'Home', 'Work'
-    address: string; // Full address
-    city: string; // City
-    state: string; // State
-    zipCode: string; // Postal code
-    country: string; // Country
-    isDefault?: boolean; // Marks the default address
+    alias: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+    isDefault?: boolean;
   }>;
-  lastLogin?: Date; // Last login timestamp
-  loginAttempts: number; // Number of failed login attempts
-  theme: 'light' | 'dark'; // Theme preference
-  language: string; // e.g., 'en', 'fr'
-  deletedAt?: Date; // Soft delete timestamp
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  metadata?: Record<string, any>; // Custom metadata
+  lastLogin?: Date; // Ensure this is Date
+  loginAttempts: number; // Ensure this is number
+  theme: 'light' | 'dark';
+  language: string;
+  deletedAt?: Date;
+  metadata?: Record<string, unknown>;
   cart?: Array<{
-    productId: Schema.Types.ObjectId; // Product reference
-    quantity: number; // Quantity of product
-    price: number; // Price at the time of adding to cart
+    productId: mongoose.Types.ObjectId;
+    quantity: number;
+    price: number;
   }>;
 }
-
-const AddressSchema: Schema = new Schema({
-  alias: { type: String, required: true },
-  address: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  zipCode: { type: String, required: true },
-  country: { type: String, required: true },
-  isDefault: { type: Boolean, default: false },
-});
-
-const CartSchema: Schema = new Schema({
-  productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, required: true, default: 1 },
-  price: { type: Number, required: true },
-});
 
 const UserSchema: Schema = new Schema(
   {
@@ -75,14 +58,34 @@ const UserSchema: Schema = new Schema(
     phoneNumber: { type: String },
     profilePicture: { type: String },
     bio: { type: String },
-    addresses: [AddressSchema],
-    lastLogin: { type: Date },
-    loginAttempts: { type: Number, default: 0 },
+    addresses: [
+      {
+        alias: { type: String, required: true },
+        address: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        zipCode: { type: String, required: true },
+        country: { type: String, required: true },
+        isDefault: { type: Boolean, default: false },
+      },
+    ],
+    lastLogin: { type: Date }, // Fix type as Date
+    loginAttempts: { type: Number, default: 0 }, // Fix type as Number
     theme: { type: String, enum: ['light', 'dark'], default: 'light' },
     language: { type: String, default: 'en' },
     deletedAt: { type: Date },
     metadata: { type: Schema.Types.Mixed },
-    cart: [CartSchema],
+    cart: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        quantity: { type: Number, required: true, default: 1 },
+        price: { type: Number, required: true },
+      },
+    ],
   },
   { timestamps: true } // Adds createdAt and updatedAt fields
 );
