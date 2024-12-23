@@ -6,6 +6,8 @@ import connectDB from './config/database';
 
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
+import inventoryRoutes from './routes/inventoryRoutes';
+import path from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,16 @@ app.get('/health', (_req: Request, res: Response) => {
 // Routes
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
+app.use('/inventory', inventoryRoutes);
+
+app.use(
+  '/uploads/images',
+  express.static(path.join(__dirname, 'uploads/images'))
+);
+app.use(
+  '/uploads/thumbnails',
+  express.static(path.join(__dirname, 'uploads/thumbnails'))
+);
 
 // Connect to MongoDB
 connectDB();

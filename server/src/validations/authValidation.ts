@@ -13,7 +13,7 @@ export const registerValidation = [
 ];
 
 export const loginValidation = [
-  check('email').isEmail().withMessage('Invalid email address'),
+  check('email').notEmpty().isEmail().withMessage('Invalid email address'),
   check('password').notEmpty().withMessage('Password is required'),
 ];
 
