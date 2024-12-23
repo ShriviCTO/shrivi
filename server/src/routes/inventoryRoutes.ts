@@ -70,6 +70,7 @@ router.post(
   validateRequest,
   addProductImages
 );
+
 /**
  * @route PUT /inventory/products/:id
  * @desc Update an existing product

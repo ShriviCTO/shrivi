@@ -28,14 +28,36 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/inventory', inventoryRoutes);
 
-app.use(
-  '/uploads/images',
-  express.static(path.join(__dirname, 'uploads/images'))
-);
-app.use(
-  '/uploads/thumbnails',
-  express.static(path.join(__dirname, 'uploads/thumbnails'))
-);
+// // Serve original images
+// app.use('/images', express.static(path.join(__dirname, 'uploads', 'images')));
+
+// // Serve thumbnails
+// app.use(
+//   '/thumbnails',
+//   express.static(path.join(__dirname, 'uploads', 'thumbnails'))
+// );
+
+// Route to serve image
+app.get('/images/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, '..', 'uploads', 'images', imageName);
+  console.log(imagePath);
+  res.sendFile(imagePath);
+});
+
+// Route to serve image
+app.get('/thumbnails/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(
+    __dirname,
+    '..',
+    'uploads',
+    'thumbnails',
+    imageName
+  );
+  console.log(imagePath);
+  res.sendFile(imagePath);
+});
 
 // Connect to MongoDB
 connectDB();
