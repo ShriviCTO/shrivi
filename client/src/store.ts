@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./slices/userSlice";
+import productReducer from "./slices/productSlice";
 
-// Placeholder reducer: Replace this with your actual reducers or slices
 const store = configureStore({
   reducer: {
-    // Add reducers here, e.g., auth: authReducer,
+    user: userReducer,
+    product: productReducer, // Add product slice
   },
 });
 

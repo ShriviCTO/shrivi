@@ -6,6 +6,7 @@ import {
   Link,
   Stack,
   IconButton,
+  Button,
 } from "@mui/material";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import HomeIcon from "@mui/icons-material/Home";
@@ -125,8 +126,29 @@ const Footer: React.FC = () => {
             pt: 2,
             borderTop: "1px solid rgba(255, 255, 255, 0.2)",
             textAlign: "center",
+            position: "relative",
           }}
         >
+          {/* Discreet Sign-In Button */}
+          <Button
+            variant="text"
+            size="small"
+            sx={{
+              position: "absolute",
+              right: 16,
+              bottom: -10,
+              color: "rgba(255, 255, 255, 0.7)",
+              textTransform: "none",
+              fontSize: "0.85rem",
+              "&:hover": { color: "white", textDecoration: "underline" },
+            }}
+            onClick={() => {
+              window.location.href = "/login"; // Redirect to the login page
+            }}
+          >
+            Employee Sign In
+          </Button>
+
           <Typography variant="body2" sx={{ mb: 1 }}>
             © {new Date().getFullYear()} Shrivi Organics. All rights reserved.
           </Typography>

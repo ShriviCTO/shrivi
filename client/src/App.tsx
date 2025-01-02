@@ -15,6 +15,10 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Contact = lazy(() => import("./pages/Contact"));
 const BulkOrders = lazy(() => import("./pages/BulkOrders"));
 const Careers = lazy(() => import("./pages/Careers"));
+const LoginPage = lazy(() => import("./pages/Login"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Product = lazy(() => import("./pages/Product"));
 
 const App: React.FC = () => {
   return (
@@ -26,6 +30,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/product" element={<Product />} />
               <Route path="/products" element={<Products />} />
               <Route path="/products/urvaruka" element={<UrvarukaProduct />} />
               <Route path="/blog" element={<Blog />} />
@@ -33,6 +38,9 @@ const App: React.FC = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/bulk-orders" element={<BulkOrders />} />
               <Route path="/careers" element={<Careers />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </Suspense>
         </main>
