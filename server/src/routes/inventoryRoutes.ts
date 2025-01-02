@@ -9,6 +9,7 @@ import {
   addProductDiscount,
   updateProductVariant,
   addProductImages,
+  createVariant,
 } from '../controllers/inventoryController';
 import { authenticateJWT, authorizeRoles } from '../middleware/authMiddleware';
 import {
@@ -21,7 +22,7 @@ import {
 // import { upload } from '../middleware/multer';
 import { validateRequest } from '../middleware/validateRequest';
 import { upload } from '../middleware/multer';
-import { processImage, processImages } from '../middleware/imageProcessor';
+import { processImages } from '../middleware/imageProcessor';
 
 const router = Router();
 
@@ -40,21 +41,6 @@ router.post(
   createProduct
 );
 
-// Upload Image
-router.post(
-  '/image',
-  authenticateJWT,
-  authorizeRoles(['founder', 'inventory manager']),
-  upload.single('image'),
-  processImage,
-  (req, res) => {
-    res.status(201).json({
-      message: 'Image uploaded successfully.',
-      filename: req.file?.filename,
-    });
-  }
-);
-
 /**
  * @route POST /inventory/products/:id/images
  * @desc Add images to an existing product
@@ -68,6 +54,20 @@ router.post(
   processImages,
   validateRequest,
   addProductImages
+);
+
+/**
+ * @route POST /inventory/products/:productId/variants
+ * @desc Create a new variant for a product
+ * @access Restricted to 'founder' and 'inventory manager'
+ */
+router.post(
+  '/products/:productId/variants',
+  authenticateJWT,
+  authorizeRoles(['founder', 'inventory manager']),
+  // createVariantValidation, // Middleware for validation
+  validateRequest, // Middleware to check validation results
+  createVariant // Controller function
 );
 
 /**

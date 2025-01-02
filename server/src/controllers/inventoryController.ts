@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 
-import { Product } from '../models/Product';
+import { Product, Variant } from '../models/Product';
+import mongoose from 'mongoose';
 
 /**
  * @desc Create a new product along with its variants
@@ -170,6 +171,99 @@ export const addProductImages = async (
     res.status(500).json({
       status: 'error',
       message: 'An internal server error occurred while adding images.',
+    });
+  }
+};
+
+/**
+ * @desc Create a new variant for an existing product
+ * @route POST /inventory/products/:productId/variants
+ * @access Restricted to 'founder' and 'inventory manager'
+ */
+export const createVariant = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { productId } = req.params;
+  const {
+    label,
+    price,
+    sku,
+    stock,
+    dimensions,
+    description,
+    packaging,
+    lowStockThreshold,
+  } = req.body;
+
+  try {
+    console.log('Received request to create variant:', {
+      productId,
+      label,
+      sku,
+    });
+
+    // Ensure the parent product exists and is active
+    const product = await Product.findOne({
+      _id: productId,
+      status: { $ne: 'archived' },
+    });
+    if (!product) {
+      console.log(`Product not found or inactive: ${productId}`);
+      res.status(404).json({
+        status: 'error',
+        message: 'Parent product not found or is inactive/archived.',
+      });
+      return;
+    }
+
+    // Check for SKU uniqueness
+    const existingVariant = await Variant.findOne({ sku });
+    if (existingVariant) {
+      console.log(`SKU already exists: ${sku}`);
+      res.status(409).json({
+        status: 'error',
+        message: 'A variant with this SKU already exists.',
+      });
+      return;
+    }
+
+    // Create the new variant
+    const newVariant = new Variant({
+      productId,
+      label,
+      price,
+      sku,
+      stock: stock ?? 50, // Default to 50 if not provided
+      dimensions,
+      description,
+      packaging,
+      lowStockThreshold: lowStockThreshold ?? 50, // Default to 50 if not provided
+    });
+
+    await newVariant.save();
+    console.log('Variant created:', newVariant);
+
+    // Add the variant to the parent product
+    product.variants.push(newVariant._id as mongoose.Types.ObjectId);
+    await product.save();
+
+    console.log('Updated product with new variant:', product);
+
+    // Return the updated product with the new variant
+    const updatedProduct =
+      await Product.findById(productId).populate('variants');
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Variant created successfully.',
+      data: updatedProduct,
+    });
+  } catch (error) {
+    console.error('Error creating variant:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal server error occurred while creating the variant.',
     });
   }
 };

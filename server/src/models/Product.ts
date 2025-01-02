@@ -32,17 +32,17 @@ const VariantSchema = new Schema<IVariant>(
     },
     label: { type: String, required: true },
     price: { type: Number, required: true },
-    sku: { type: String, required: true, unique: true },
+    sku: { type: String, unique: true },
     stock: { type: Number, required: true },
     dimensions: {
-      weight: { type: String, required: true },
-      height: { type: String, required: true },
-      width: { type: String, required: true },
-      depth: { type: String, required: true },
+      weight: { type: String },
+      height: { type: String },
+      width: { type: String },
+      depth: { type: String },
     },
     packaging: { type: String },
     description: { type: String },
-    lowStockThreshold: { type: Number, default: 5 }, // Default threshold
+    lowStockThreshold: { type: Number, default: 50 }, // Default threshold
   },
   { timestamps: true }
 );

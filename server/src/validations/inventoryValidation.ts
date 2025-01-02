@@ -99,6 +99,97 @@ export const createProductValidation = [
 ];
 
 /**
+ * Validation for creating a new variant
+ */
+export const createVariantValidation = [
+  // Validate 'label' - required, string, max 60 characters
+  body('label')
+    .notEmpty()
+    .withMessage('Variant label is required.')
+    .isString()
+    .withMessage('Variant label must be a string.')
+    .isLength({ max: 60 })
+    .withMessage('Variant label cannot exceed 60 characters.'),
+
+  // Validate 'price' - required, must be a number between 0 and 10000
+  body('price')
+    .notEmpty()
+    .withMessage('Variant price is required.')
+    .isFloat({ min: 0, max: 10000 })
+    .withMessage('Variant price must be between 0 and 10000.'),
+
+  // Validate 'sku' - optional, max 100 characters
+  body('sku')
+    .optional()
+    .isString()
+    .withMessage('Variant SKU must be a string.')
+    .isLength({ max: 100 })
+    .withMessage('Variant SKU cannot exceed 100 characters.'),
+
+  // Validate 'stock' - required, must be a non-negative number
+  body('stock')
+    .notEmpty()
+    .withMessage('Stock is required.')
+    .isInt({ min: 0 })
+    .withMessage('Stock cannot be negative.'),
+
+  // Validate 'dimensions' - optional object with string fields
+  body('dimensions')
+    .optional()
+    .isObject()
+    .withMessage('Dimensions must be an object.')
+    .custom((dimensions) => {
+      const { weight, height, width, depth } = dimensions || {};
+      if (weight && typeof weight !== 'string') {
+        throw new Error('Weight must be a string if provided.');
+      }
+      if (height && typeof height !== 'string') {
+        throw new Error('Height must be a string if provided.');
+      }
+      if (width && typeof width !== 'string') {
+        throw new Error('Width must be a string if provided.');
+      }
+      if (depth && typeof depth !== 'string') {
+        throw new Error('Depth must be a string if provided.');
+      }
+      if (
+        (weight && weight.length > 50) ||
+        (height && height.length > 50) ||
+        (width && width.length > 50) ||
+        (depth && depth.length > 50)
+      ) {
+        throw new Error(
+          'Each dimension field (weight, height, width, depth) cannot exceed 50 characters.'
+        );
+      }
+      return true;
+    }),
+
+  // Validate 'packaging' - optional, max 1000 characters
+  body('packaging')
+    .optional()
+    .isString()
+    .withMessage('Packaging must be a string.')
+    .isLength({ max: 1000 })
+    .withMessage('Packaging cannot exceed 1000 characters.'),
+
+  // Validate 'description' - required, max 140 characters
+  body('description')
+    .notEmpty()
+    .withMessage('Description is required.')
+    .isString()
+    .withMessage('Description must be a string.')
+    .isLength({ max: 140 })
+    .withMessage('Description cannot exceed 140 characters.'),
+
+  // Validate 'lowStockThreshold' - optional, non-negative number
+  body('lowStockThreshold')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Low stock threshold cannot be negative.'),
+];
+
+/**
  * Validation for updating a product
  */
 export const updateProductValidation = [
