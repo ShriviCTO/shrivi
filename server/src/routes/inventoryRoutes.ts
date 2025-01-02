@@ -8,7 +8,6 @@ import {
   bulkUpdateInventory,
   addProductDiscount,
   updateProductVariant,
-  updateVariantDiscount,
   addProductImages,
 } from '../controllers/inventoryController';
 import { authenticateJWT, authorizeRoles } from '../middleware/authMiddleware';
@@ -18,12 +17,11 @@ import {
   bulkUpdateInventoryValidation,
   addProductDiscountValidation,
   updateVariantValidation,
-  updateVariantDiscountValidation,
 } from '../validations/inventoryValidation';
 // import { upload } from '../middleware/multer';
 import { validateRequest } from '../middleware/validateRequest';
 import { upload } from '../middleware/multer';
-import { processImage } from '../middleware/imageProcessor';
+import { processImage, processImages } from '../middleware/imageProcessor';
 
 const router = Router();
 
@@ -67,6 +65,7 @@ router.post(
   authenticateJWT,
   authorizeRoles(['founder', 'inventory manager']),
   upload.array('images', 10), // Max 10 images
+  processImages,
   validateRequest,
   addProductImages
 );
@@ -147,19 +146,6 @@ router.put(
   authorizeRoles(['founder', 'inventory manager']),
   updateVariantValidation,
   updateProductVariant
-);
-
-/**
- * @route POST /inventory/products/:id/variants/:variantId/discount
- * @desc Add or update a discount for a specific variant
- * @access Restricted to 'founder' and 'inventory manager' roles
- */
-router.post(
-  '/products/:id/variants/:variantId/discount',
-  authenticateJWT,
-  authorizeRoles(['founder', 'inventory manager']),
-  updateVariantDiscountValidation,
-  updateVariantDiscount
 );
 
 export default router;

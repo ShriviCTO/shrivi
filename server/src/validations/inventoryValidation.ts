@@ -1,37 +1,43 @@
 import { body, param } from 'express-validator';
 
 export const createProductValidation = [
-  // Validate 'name' - required, string, and unique
+  // Validate 'name' - required, alphanumeric, hyphen, dots allowed, unique
   body('name')
     .notEmpty()
     .withMessage('Product name is required.')
     .isString()
     .withMessage('Product name must be a string.')
-    .isLength({ max: 100 })
-    .withMessage('Product name cannot exceed 100 characters.'),
+    .isLength({ min: 3, max: 100 })
+    .withMessage('Product name must be between 3 and 100 characters.')
+    .matches(/^[\w\s\-.–]+$/u)
+    .withMessage(
+      'Product name can only contain alphanumeric characters, spaces, hyphens, and dots.'
+    ),
 
-  // Validate 'tagline' - required and string
+  // Validate 'tagline' - required, max 140 characters
   body('tagline')
     .notEmpty()
     .withMessage('Product tagline is required.')
     .isString()
     .withMessage('Product tagline must be a string.')
-    .isLength({ max: 150 })
-    .withMessage('Product tagline cannot exceed 150 characters.'),
+    .isLength({ max: 140 })
+    .withMessage('Product tagline cannot exceed 140 characters.'),
 
-  // Validate 'description' - required and string
+  // Validate 'description' - required, max 1500 characters
   body('description')
     .notEmpty()
     .withMessage('Product description is required.')
     .isString()
     .withMessage('Product description must be a string.')
-    .isLength({ max: 2000 })
-    .withMessage('Product description cannot exceed 2000 characters.'),
+    .isLength({ max: 1500 })
+    .withMessage('Product description cannot exceed 1500 characters.'),
 
-  // Validate 'tags' - must be an array of strings
+  // Validate 'tags' - array of strings, min 3, max 10
   body('tags')
-    .isArray({ min: 1 })
-    .withMessage('Tags must be a non-empty array.')
+    .isArray({ min: 2, max: 10 })
+    .withMessage(
+      'Tags must be an array with at least 2 and no more than 10 items.'
+    )
     .custom((tags: string[]) => {
       for (const tag of tags) {
         if (typeof tag !== 'string') {
@@ -41,45 +47,55 @@ export const createProductValidation = [
       return true;
     }),
 
-  // Validate 'features' - must be an array of objects with 'icon' and 'label'
+  // Validate 'features' - array of objects with 'label' (string, max 25 chars)
   body('features')
     .isArray({ min: 1 })
     .withMessage('Features must be a non-empty array.')
     .custom((features) => {
       for (const feature of features) {
-        if (
-          typeof feature !== 'object' ||
-          typeof feature.icon !== 'string' ||
-          typeof feature.label !== 'string'
-        ) {
-          throw new Error(
-            'Each feature must have a string `icon` and a string `label`.'
-          );
+        if (typeof feature !== 'object' || typeof feature.label !== 'string') {
+          throw new Error('Each feature must have a string `label`.');
+        }
+        if (feature.label.length > 25) {
+          throw new Error('Feature label cannot exceed 25 characters.');
         }
       }
       return true;
     }),
 
-  // Validate 'images' - optional, must be an array of objects with 'url', 'altText', and 'isPrimary'
-  body('images')
+  // Validate 'nutritionalContent' - required, string
+  body('nutritionalContent')
+    .notEmpty()
+    .withMessage('Nutritional content is required.')
+    .isString()
+    .withMessage('Nutritional content must be a string.'),
+
+  // Validate 'certifications' - optional, string
+  body('certifications')
     .optional()
-    .isArray()
-    .withMessage('Images must be an array.')
-    .custom((images) => {
-      for (const image of images) {
-        if (
-          typeof image !== 'object' ||
-          typeof image.url !== 'string' ||
-          typeof image.altText !== 'string' ||
-          typeof image.isPrimary !== 'boolean'
-        ) {
-          throw new Error(
-            'Each image must have a string `url`, string `altText`, and boolean `isPrimary`.'
-          );
-        }
-      }
-      return true;
-    }),
+    .isString()
+    .withMessage('Certifications must be a string.'),
+
+  // Validate 'usageInstructions' - required, string, max 1500 characters
+  body('usageInstructions')
+    .notEmpty()
+    .withMessage('Usage instructions are required.')
+    .isString()
+    .withMessage('Usage instructions must be a string.')
+    .isLength({ max: 1500 })
+    .withMessage('Usage instructions cannot exceed 1500 characters.'),
+
+  // Validate 'environmentalImpact' - optional, string
+  body('environmentalImpact')
+    .optional()
+    .isString()
+    .withMessage('Environmental impact must be a string.'),
+
+  // Validate 'returnPolicy' - optional, object with 'description' and 'process'
+  body('returnPolicy')
+    .optional()
+    .isString()
+    .withMessage('Return Policy must be a string.'),
 ];
 
 /**

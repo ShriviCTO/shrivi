@@ -1,47 +1,85 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { DiscountHistorySchema } from './DiscountHistory'; // Reuse DiscountHistorySchema
 
 /**
- * Subdocument Schema for Product Variants
+ * Interface for Variant
  */
-const VariantSchema = new Schema({
-  size: { type: String, required: true }, // Example: "0.5kg", "1kg"
-  sku: { type: String, unique: true, sparse: true }, // Unique identifier for the variant
-  price: { type: Number, required: true }, // Price for the variant
-  stock: { type: Number, required: true }, // Stock level for the variant
-  lowStockThreshold: { type: Number, required: true }, // Configurable threshold for low stock alerts
-});
+export interface IVariant extends Document {
+  productId: mongoose.Types.ObjectId; // Reference to parent product
+  label: string; // Name of the variant (e.g., "Mini", "Regular")
+  price: number; // Price of the variant
+  sku: string; // Unique SKU
+  stock: number; // Current stock level
+  dimensions: {
+    weight: string; // e.g., "0.5kg"
+    height: string;
+    width: string;
+    depth: string;
+  };
+  packaging?: string; // Description of packaging
+  description?: string; // Description for the variant
+  lowStockThreshold?: number; // Optional threshold for low stock alerts
+}
+
+/**
+ * Variant Schema
+ */
+const VariantSchema = new Schema<IVariant>(
+  {
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Product',
+      required: true,
+    },
+    label: { type: String, required: true },
+    price: { type: Number, required: true },
+    sku: { type: String, required: true, unique: true },
+    stock: { type: Number, required: true },
+    dimensions: {
+      weight: { type: String, required: true },
+      height: { type: String, required: true },
+      width: { type: String, required: true },
+      depth: { type: String, required: true },
+    },
+    packaging: { type: String },
+    description: { type: String },
+    lowStockThreshold: { type: Number, default: 5 }, // Default threshold
+  },
+  { timestamps: true }
+);
 
 /**
  * Interface for Product
  */
 export interface IProduct extends Document {
-  name: string; // Product name
-  tagline: string; // Short tagline for the product
-  description: string; // Detailed product description
-  variants: (typeof VariantSchema)[]; // Array of size variants
-  tags: string[]; // Flat tags for search and filtering
+  name: string;
+  tagline: string;
+  description: string;
+  tags: string[];
   features: Array<{
-    icon: string; // Icon associated with the feature
-    label: string; // Display label for the feature
+    icon: string; // Predefined icon reference
+    label: string; // Display label
   }>;
   images: Array<{
-    url: string; // URL for the image
-    altText: string; // Alt text for accessibility
-    isPrimary: boolean; // Marks the primary image
+    url: string;
+    altText?: string; // Alt text for accessibility
+    isPrimary: boolean; // Indicates the primary image
   }>;
-  status: 'active' | 'inactive' | 'archived' | 'deleted' | 'upcoming'; // Status of the product
-  deletedAt?: Date; // Timestamp for soft delete
-  createdAt: Date; // Timestamp for creation
-  updatedAt: Date; // Timestamp for last update
-  averageRating?: number; // Precomputed average rating
-  metadata?: Record<string, unknown>; // Optional custom metadata
-  discount: {
-    startDate?: Date; // Start date for the discount
-    endDate?: Date; // End date for the discount
-    percentage?: number; // Discount percentage
+  videos: Array<{
+    url: string;
+    title: string;
+  }>;
+  nutritionalContent: string; // Markdown text
+  certifications?: string; // Markdown text
+  usageInstructions: string; // Markdown text
+  environmentalImpact?: string; // Markdown text
+  returnPolicy?: string;
+  status: 'inactive' | 'upcoming' | 'active' | 'archived' | 'deleted';
+  discount?: {
+    percentage: number;
+    validUntil: Date;
   };
-  discountHistory: (typeof DiscountHistorySchema)[]; // Historical discounts
+  variants: mongoose.Types.ObjectId[]; // References to Variant schema
+  deletedAt?: Date;
 }
 
 /**
@@ -49,10 +87,9 @@ export interface IProduct extends Document {
  */
 const ProductSchema = new Schema<IProduct>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     tagline: { type: String, required: true },
     description: { type: String, required: true },
-    variants: { type: [VariantSchema], default: [] },
     tags: [{ type: String, required: true }],
     features: [
       {
@@ -67,22 +104,68 @@ const ProductSchema = new Schema<IProduct>(
         isPrimary: { type: Boolean, default: false },
       },
     ],
+    videos: [
+      {
+        url: { type: String, required: true },
+        title: { type: String, required: true },
+      },
+    ],
+    nutritionalContent: { type: String, required: true },
+    certifications: { type: String },
+    usageInstructions: { type: String, required: true },
+    environmentalImpact: { type: String },
+    returnPolicy: { type: String },
     status: {
       type: String,
-      enum: ['active', 'inactive', 'archived', 'deleted', 'upcoming'],
-      default: 'active',
+      enum: ['inactive', 'upcoming', 'active', 'archived', 'deleted'],
+      default: 'inactive',
     },
-    deletedAt: { type: Date },
-    averageRating: { type: Number, default: 0 },
-    metadata: { type: Schema.Types.Mixed },
     discount: {
       percentage: { type: Number },
-      startDate: { type: Date },
-      endDate: { type: Date },
+      validUntil: { type: Date },
     },
-    discountHistory: [DiscountHistorySchema],
+    variants: [{ type: mongoose.Types.ObjectId, ref: 'Variant' }],
+    deletedAt: { type: Date },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IProduct>('Product', ProductSchema);
+export interface IBundle extends Document {
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  discount?: number;
+  variants: Array<{
+    variantId: mongoose.Types.ObjectId;
+    quantity: number; // Quantity of this variant in the bundle
+  }>;
+}
+
+/**
+ * Bundle Schema
+ */
+const BundleSchema = new Schema<IBundle>(
+  {
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    image: { type: String, required: true },
+    price: { type: Number, required: true },
+    discount: { type: Number },
+    variants: [
+      {
+        variantId: {
+          type: mongoose.Types.ObjectId,
+          ref: 'Variant',
+          required: true,
+        },
+        quantity: { type: Number, required: true, default: 1 },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+export const Bundle = mongoose.model<IBundle>('Bundle', BundleSchema);
+export const Variant = mongoose.model<IVariant>('Variant', VariantSchema);
+export const Product = mongoose.model<IProduct>('Product', ProductSchema);

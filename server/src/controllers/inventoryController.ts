@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 
-import Product from '../models/Product';
+import { Product } from '../models/Product';
 
 /**
- * @desc Create a new product
+ * @desc Create a new product along with its variants
  * @route POST /inventory/products
  * @access Restricted to 'founder' and 'inventory manager'
  */
@@ -13,7 +13,19 @@ export const createProduct = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { name, tagline, description, tags, features } = req.body;
+  const {
+    name,
+    tagline,
+    description,
+    tags,
+    features,
+    videos,
+    nutritionalContent,
+    certifications,
+    usageInstructions,
+    environmentalImpact,
+    returnPolicy,
+  } = req.body;
 
   try {
     // Check if a product with the same name exists (including soft-deleted)
@@ -26,16 +38,23 @@ export const createProduct = async (
       return;
     }
 
-    // Create the new product
+    // Create the product
     const product = new Product({
       name,
       tagline,
       description,
       tags,
       features,
+      videos,
+      nutritionalContent,
+      certifications,
+      usageInstructions,
+      environmentalImpact,
+      returnPolicy,
       status: 'inactive', // Default status
     });
 
+    // Save the product
     await product.save();
 
     res.status(201).json({
@@ -56,6 +75,12 @@ export const createProduct = async (
  * @desc Add images to an existing product
  * @route POST /inventory/products/:id/images
  * @access Restricted to 'founder' and 'inventory manager'
+ *
+ * @responses
+ * - 200: Images added successfully.
+ * - 400: Invalid input (e.g., archived/deleted product, invalid image count, no images uploaded).
+ * - 404: Product not found.
+ * - 500: Internal server error.
  */
 export const addProductImages = async (
   req: Request,
@@ -64,9 +89,12 @@ export const addProductImages = async (
   const { id } = req.params;
 
   try {
+    console.log(`Received request to add images to product ID: ${id}`);
+
     // Ensure the product exists
     const product = await Product.findById(id);
     if (!product) {
+      console.log(`Product with ID ${id} not found.`);
       res.status(404).json({
         status: 'error',
         message: 'Product not found.',
@@ -74,8 +102,21 @@ export const addProductImages = async (
       return;
     }
 
+    // Check if the product status allows image updates
+    if (['archived', 'deleted'].includes(product.status)) {
+      console.log(
+        `Cannot add images to product with ID ${id}, status: ${product.status}`
+      );
+      res.status(400).json({
+        status: 'error',
+        message: `Cannot add images to a product that is ${product.status}.`,
+      });
+      return;
+    }
+
     // Validate if files are uploaded
     if (!req.files || !(req.files as Express.Multer.File[]).length) {
+      console.log(`No images uploaded for product ID: ${id}`);
       res.status(400).json({
         status: 'error',
         message: 'No images uploaded.',
@@ -83,17 +124,41 @@ export const addProductImages = async (
       return;
     }
 
-    // Extract image URLs
-    const uploadedFiles = (req.files as Express.Multer.File[]).map((file) => ({
+    // Validate image count
+    const existingImageCount = product.images.length;
+    const newImages = req.files as Express.Multer.File[];
+    const totalImages = existingImageCount + newImages.length;
+
+    if (totalImages < 3 || totalImages > 10) {
+      console.log(
+        `Invalid total image count for product ID: ${id}. Existing: ${existingImageCount}, New: ${newImages.length}`
+      );
+      res.status(400).json({
+        status: 'error',
+        message: `A product must have between 3 and 10 images. Current count: ${existingImageCount}, trying to add: ${newImages.length}.`,
+      });
+      return;
+    }
+
+    // Extract image URLs and set the first new image as primary if no primary exists
+    const uploadedFiles = newImages.map((file, index) => ({
       url: `/uploads/images/${file.filename}`,
       altText: file.originalname, // Default altText as filename
-      isPrimary: false, // Default to not primary
+      isPrimary: existingImageCount === 0 && index === 0, // Set primary if no images exist
     }));
+
+    if (existingImageCount > 0) {
+      const primaryExists = product.images.some((img) => img.isPrimary);
+      if (!primaryExists) {
+        uploadedFiles[0].isPrimary = true; // Ensure one primary image exists
+      }
+    }
 
     // Update the product with new images
     product.images = [...product.images, ...uploadedFiles];
-
     await product.save();
+
+    console.log(`Images added successfully to product ID: ${id}.`);
 
     res.status(200).json({
       status: 'success',
@@ -337,30 +402,6 @@ export const updateProductVariant = async (
     });
   } catch (error) {
     console.error('Error in updateProductVariant:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An internal server error occurred.',
-    });
-  }
-};
-
-/**
- * @desc Add or update a discount for a specific variant
- * @route POST /inventory/products/:id/variants/:variantId/discount
- * @access Restricted to 'founder' and 'inventory manager'
- */
-export const updateVariantDiscount = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    // Placeholder logic
-    res.status(501).json({
-      status: 'error',
-      message: 'This functionality is not implemented yet.',
-    });
-  } catch (error) {
-    console.error('Error in updateVariantDiscount:', error);
     res.status(500).json({
       status: 'error',
       message: 'An internal server error occurred.',
